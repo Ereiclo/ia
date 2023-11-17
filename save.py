@@ -63,14 +63,9 @@ for movie in movies:
 
     tag_string = tag_string.strip()
 
-    #pensar un mejor esquema de documento
     movie_document = movie["title"] + " " + \
-        genre + " " + tag_string
-
+        genre + " " + str(avg_rating) + " " + tag_string
     
-    if avg_rating is None:
-        avg_rating = 0
 
-    collection.add(ids=[str(movie["movieid"])], documents=[
-            movie_document], metadatas=[{"avg_rating": avg_rating}])
+    collection.add(ids=[str(movie["movieid"])], documents=[movie_document])
     progress_bar.update(1)

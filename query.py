@@ -31,7 +31,7 @@ collection = client.get_or_create_collection(name="movies")
 
 
 results = collection.query(
-    query_texts=["Recommend me movies where Leonardo Dicrapio is the author"],
+    query_texts=["Recommend a movie where Leonardo DiCaprio is the main actor"],
     n_results=5
 )
 
