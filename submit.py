@@ -2,14 +2,18 @@ import psycopg2
 import csv
 import psycopg2.extras
 
+import json
+
+with open('config.json') as f:
+    config = json.load(f)
 
 # connect to database movies
 def get_connection():
     conn = psycopg2.connect(
-        host="localhost",
+        host=config['DB_HOST'],
         database="movies",
-        user="postgres",
-        password=1234,
+        user=config["DB_USER"],
+        password=config["DB_PASSWORD"],
         port=5432
     )
 
@@ -90,7 +94,7 @@ def create_tables():
 
 #insert data into tables
 def insert_data():
-    with open('ml-latest-small/movies.csv', 'r') as f:
+    with open('ml-latest-small/movies.csv', 'r', encoding='latin-1') as f:
         reader = csv.reader(f)
         next(reader)
         for row in reader:

@@ -6,14 +6,21 @@ import os
 from chromadb.config import Settings
 import psycopg2
 
+import json
+
+from flask_cors import CORS
+from flask import Flask, jsonify, request
+
+with open('config.json') as f:
+    config = json.load(f)
 
 # connect to database movies
 def get_connection():
     conn = psycopg2.connect(
-        host="localhost",
+        host=config['DB_HOST'],
         database="movies",
-        user="postgres",
-        password=1234,
+        user=config["DB_USER"],
+        password=config["DB_PASSWORD"],
         port=5432
     )
 
@@ -24,15 +31,31 @@ def get_connection():
 client = chromadb.PersistentClient('./chroma')
 openai_ef = embedding_functions.OpenAIEmbeddingFunction(
     model_name="text-embedding-ada-002",
-    api_key=os.environ.get("OPENAI_API_KEY"),
+    api_key=config['OPEN_API_KEY'],
 )
 collection = client.get_or_create_collection(name="movies")
 
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
+@app.post("/api/query")
+def api_query():
+    # get json from request body
+    json_body = request.json
+
+    # get query text
+    query_text = json_body['query']
+
+    results = collection.query(
+        # query_texts=["Give me movies that talk about drugs"],
+        query_texts=query_text,
+        n_results=5
+    )
+
+    return jsonify(results)
 
 
-results = collection.query(
-    query_texts=["Recommend a movie where Leonardo DiCaprio is the main actor"],
-    n_results=5
-)
+if __name__ == "__main__":
+    app.run(debug=True)
 
-print(results)
+# print(results)

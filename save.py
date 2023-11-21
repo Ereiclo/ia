@@ -6,14 +6,18 @@ import os
 from chromadb.config import Settings
 import psycopg2
 
+import json
+
+with open('config.json') as f:
+    config = json.load(f)
 
 # connect to database movies
 def get_connection():
     conn = psycopg2.connect(
-        host="localhost",
+        host=config['DB_HOST'],
         database="movies",
-        user="postgres",
-        password=1234,
+        user=config["DB_USER"],
+        password=config["DB_PASSWORD"],
         port=5432
     )
 
@@ -24,7 +28,7 @@ def get_connection():
 client = chromadb.PersistentClient('./chroma')
 openai_ef = embedding_functions.OpenAIEmbeddingFunction(
     model_name="text-embedding-ada-002",
-    api_key=os.environ.get("OPENAI_API_KEY"),
+    api_key=config['OPEN_API_KEY'],
 )
 collection = client.get_or_create_collection(name="movies")
 
@@ -42,7 +46,7 @@ progress_bar = tqdm(total=len(movies), unit="movies")
 
 for movie in movies:
 
-    genre = movie['genres'].replace('|', ' ')
+    genre = movie['genres'].replace('|', ', ')
 
     # get average rating
     cur.execute('''
@@ -61,11 +65,15 @@ for movie in movies:
     for tag in tags:
         tag_string += tag['tag'] + " "
 
+    amount_of_tags = len(tags)
+
     tag_string = tag_string.strip()
 
-    movie_document = movie["title"] + " " + \
-        genre + " " + str(avg_rating) + " " + tag_string
+    movie_document = f'The movie {movie["title"]} is associated with {tag_string}. This movie appears {amount_of_tags} times on the web and is often catalogued as an {genre}.'
     
+    # print(movie_document)
+    # break
 
-    collection.add(ids=[str(movie["movieid"])], documents=[movie_document])
+    avg_rating = avg_rating if avg_rating else 0
+    collection.add(ids=[str(movie["movieid"])], documents=[movie_document], metadatas=[{"rating": avg_rating }])
     progress_bar.update(1)

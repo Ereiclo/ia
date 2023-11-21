@@ -1,0 +1,40 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "localhost",
+            "database": "postgres",
+            "username": "postgres",
+            "password": "root"
+        },
+        {
+            "previewLimit": 50,
+            "server": "194.163.147.223",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "creacion",
+            "database": "bd_grupo_7",
+            "username": "usr_group7",
+            "password": "vuelve_ernesto"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "name": "cinemania",
+            "database": "cinemania",
+            "username": "postgres"
+        },
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "CHROM",
+            "database": "${workspaceFolder:ia}/chroma/chroma.sqlite3"
+        }
+    ]
+}
