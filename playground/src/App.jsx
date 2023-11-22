@@ -3,21 +3,21 @@ import { useState } from "react";
 // import viteLogo from '/vite.svg'
 // import './App.css'
 
-function Movie({id, description, rating}){
+function Movie({ id, description, rating }) {
   return (
     <div className="accordion-item">
-    <h2 className="accordion-header">
-      <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${id}`} aria-expanded="true" aria-controls={`collapse${id}`}>
-        Movie #{id}
-      </button>
-    </h2>
-    <div id={`collapse${id}`} className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-      <div className="accordion-body">
-        <p>{description}</p>
-        <p>Avg Rating: {Math.round(rating)}</p>
+      <h2 className="accordion-header">
+        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${id}`} aria-expanded="true" aria-controls={`collapse${id}`}>
+          Movie #{id}
+        </button>
+      </h2>
+      <div id={`collapse${id}`} className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+        <div className="accordion-body">
+          <p>{description}</p>
+          <p>Avg Rating: {Math.round(rating)}</p>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 
@@ -38,17 +38,19 @@ function App() {
     }).then((res) => {
       return res.json();
     }).then((data) => {
-      
-      // console.log(data);
-      let result_array = [];
 
-      for(let i = 0; i< n_results; i++){
+      // console.log(data);
+      const result_array = [];
+
+      for (let i = 0; i < n_results; i++) {
         result_array.push({
           'id': data['ids'][0][i],
           'description': data["documents"][0][i],
           'rating': data['metadatas'][0][i]['rating']
         });
       }
+
+      result_array.sort((a, b) => (a.rating > b.rating) ? -1 : 1);
 
       setResults(result_array);
       console.log(results)
@@ -61,7 +63,7 @@ function App() {
     <>
       <h1>POST /api/query</h1>
       <h2>
-        {"{"}<br/><span style={{marginLeft: "5%"}}>query</span>: {query}<br/>{"}"}
+        {"{"}<br /><span style={{ marginLeft: "5%" }}>query</span>: {query}<br />{"}"}
       </h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -84,7 +86,7 @@ function App() {
 
       <div className="accordion" id="accordionExample">
         {results.map((result) => (
-          <Movie id={result.id} description={result.description} rating={result.rating} key={result.id}/>
+          <Movie id={result.id} description={result.description} rating={result.rating} key={result.id} />
         ))}
       </div>
     </>
